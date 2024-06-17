@@ -1,0 +1,78 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Document {
+  createdAt DateTime @default(now())
+  file      Json?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?  @db.ObjectId
+  updatedAt DateTime @updatedAt
+}
+
+model Student {
+  createdAt DateTime   @default(now())
+  documents Document[]
+  email     String?
+  firstName String?
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  inquiries Inquiry[]
+  lastName  String?
+  password  String?
+  updatedAt DateTime   @updatedAt
+}
+
+model Faq {
+  answer    String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  question  String?
+  updatedAt DateTime @updatedAt
+}
+
+model CurriculumModule {
+  createdAt         DateTime         @default(now())
+  degreeSpecialty   DegreeSpecialty? @relation(fields: [degreeSpecialtyId], references: [id])
+  degreeSpecialtyId String?          @db.ObjectId
+  description       String?
+  id                String           @id @default(auto()) @map("_id") @db.ObjectId
+  name              String?
+  updatedAt         DateTime         @updatedAt
+}
+
+model Inquiry {
+  createdAt DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  question  String?
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?  @db.ObjectId
+  updatedAt DateTime @updatedAt
+}
+
+model DegreeSpecialty {
+  createdAt             DateTime           @default(now())
+  curriculumModules     CurriculumModule[]
+  description           String?
+  id                    String             @id @default(auto()) @map("_id") @db.ObjectId
+  languageOfInstruction String?
+  name                  String?
+  updatedAt             DateTime           @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
